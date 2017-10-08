@@ -20,7 +20,6 @@ lc7783.shp@data$id <- 1:length(lc7783.shp@data$id) ## un identifiant
 pnsg.shp <- readOGR(".", "limiteparc2") ## les limites du parc
 proj4string(pnsg.shp) <- CRS("+proj=utm +zone=30 +ellps=intl +towgs84=-87,-98,-121,0,0,0,0 +units=m +no_defs") ## définition bon CRS normallement pas besoin de transformer
 
-
 gArea(lc7783.shp)/10000 ## vérification de la surface en ha
 lc7783.shp <- gBuffer(lc7783.shp, width = 0, byid = T) ## un buffer de 0 qui corrige des petites erreures de digitalisation
 plot(lc7783.shp) ## affichage de lc7783
@@ -29,6 +28,23 @@ plot(pnsg.shp, border = "green", add = T) ## affichage du parc
 gIsValid(lc7783.shp) ## vérification de la gémotrie 
 
 lc7783cut.shp <- intersect(lc7783.shp, pnsg.shp) ## intersection ne gardant que la partie dans le parc
+gIsValid(lc7783cut.shp) ## vérification de la gémotrie 
 
 gArea(lc7783cut.shp)/10000 ## une vérification du changement de le surface
 summary(lc7783cut.shp)
+
+writeOGR(lc7783cut.shp, ".", "lc7783cut", driver = "ESRI Shapefile") ### on sauve le produit en Shapefile
+
+##### on va regarder si il y a des trous dans la digitalisation
+
+errordigit.shp <- gSymdifference(lc7783cut.shp, pnsg.shp) ### production d'un multipolygone des zones non digitalisées
+summary(errordigit.shp) 
+
+errordigit.shp <- disaggregate(errordigit.shp) ### passage d'un multiplolygone à plusieurs polygones
+errordigit.dat <- as.data.frame(1:length(errordigit.shp)) ## tableau à ajouter
+errordigit.shp <- SpatialPolygonsDataFrame(errordigit.shp, errordigit.dat ) ## passage d'un spatialpolygone à spatialpolygonedataframe
+plot(errordigit.shp)
+
+
+writeOGR(errordigit.shp, ".", "errordigit", driver = "ESRI Shapefile") ### on sauve le produit en Shapefile
+
