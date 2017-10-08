@@ -22,7 +22,7 @@ proj4string(pnsg.shp) <- CRS("+proj=utm +zone=30 +ellps=intl +towgs84=-87,-98,-1
 
 
 gArea(lc7783.shp)/10000 ## vérification de la surface en ha
-lc7783.shp <- gBuffer(lc7783.shp, width = 0, byid = T) ## un buffer de 0 qui corrige des petites erreures de digictalisation
+lc7783.shp <- gBuffer(lc7783.shp, width = 0, byid = T) ## un buffer de 0 qui corrige des petites erreures de digitalisation
 plot(lc7783.shp) ## affichage de lc7783
 
 plot(pnsg.shp, border = "green", add = T) ## affichage du parc
