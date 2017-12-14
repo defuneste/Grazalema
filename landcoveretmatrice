@@ -1,0 +1,59 @@
+### script d analyse de photo interpretation de la sierra de grazalema décembre 2017
+# https://semestriel.framapad.org/p/photointerpretationpnsg
+
+setwd("/home/defuneste/Documents/sierra de grazalema/sig/Data_Albert")
+getwd()
+
+library(sp, rgeos, rgdal) # charger les packages
+
+
+## chargement des couches
+#travail fait au 1:10000
+
+##### on commence par 1956
+
+pnsg1956 <- readOGR(".",  "cubiertas1956-par TR") ## la couverture en 1956
+summary(pnsg1956) # info de base
+
+dim(pnsg1956@data) # nb de polygones
+pnsg1956@data$count <- 1
+
+gArea(pnsg1956)/10000 # surface en ha
+
+luc <- unique(pnsg1956@data$LUC_56) # les valeurs de couv du sol
+lucv2 <- unique(pnsg1956@data$CLASS_56) # les valeurs pour les couv. reclassifiées
+
+
+
+sup1956v2 <- c()
+for(i in 1:length(unique(pnsg1956@data$CLASS_56))){
+  sup1956v2[i] <- sum(gArea(pnsg1956, byid=T)[pnsg1956@data$CLASS_56 == lucv2[i]]/10000)
+} ## une boucle pour calculer les surfaces par types reclassifiés
+
+sup1956v2.dat <- data.frame(sup1956v2, lucv2) ## un tableau de synthèse
+
+for(i in 1:length(unique(pnsg1956@data$CLASS_56))){
+  sup1956v2.dat$nbpoly[i] <- sum(pnsg1956$count[pnsg1956@data$CLASS_56 == lucv2[i]])
+} ## une boucle pour calculer le nombre de polygones par types
+
+##### on fait 77-83
+pnsg1980 <- readOGR(".",  "landcover77_83") ## la couverture en 1977-83
+summary(pnsg1980) # info de base
+
+dim(pnsg1980@data) # nb de polygones
+pnsg1980@data$count <- 1
+
+gArea(pnsg1980)/10000 # surface en ha
+
+code <- unique(pnsg1980@data$code) # les valeurs de couv du sol
+
+sup1980 <- c()
+for(i in 1:length(unique(pnsg1980@data$code))){
+  sup1980[i] <- sum(gArea(pnsg1980, byid=T)[pnsg1980@data$code == code[i]]/10000)
+} ## une boucle pour calculer les surfaces par types
+
+sup1980.dat <- data.frame(sup1980, code) ## un tableau de synthèse
+
+for(i in 1:length(unique(pnsg1980@data$code))){
+  sup1980.dat$nbpoly[i] <- sum(pnsg1980$count[pnsg1980@data$code == code[i]])
+} ## une boucle pour calculer le nombre de polygones par types
