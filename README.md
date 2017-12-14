@@ -8,3 +8,6 @@ Après l'importation des données les objectifs sont :
 - vérifier les trous (oublie de digitalisation)
 - vérifier les slivers
 - produire les statistiques de bases sur les polygones (ultérieurement)
+
+Le deuxième script est utilisé pour tout ce qui est calcul de surface et matrrice e transition, il est encore en chantier
+
